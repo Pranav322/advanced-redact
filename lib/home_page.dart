@@ -12,6 +12,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:typed_data';
 import 'package:share_plus/share_plus.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'dart:convert';
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -174,8 +176,8 @@ void _onProceed(int selectedOption) {
     }
   }
 
-  void _showRedactedFile(int selectedOption) async {
-     print("Showing redacted file for level: $selectedOption"); // Add this line
+ void _showRedactedFile(int selectedOption) async {
+  print("Showing redacted file for level: $selectedOption");
   String fileName = 'Redacted_${_file!.name}';
   String extension = '.${_file!.extension}';
 
@@ -195,20 +197,18 @@ void _onProceed(int selectedOption) {
     print('Error creating redacted file: $e');
     return;
   }
+  
 
   Widget content;
   if (_fileType == 'image') {
     content = Image.file(File(_redactedFilePath!));
+  } else if (_fileType == 'video') {
+    content = Icon(Icons.video_file, size: 50);
+  } else if (_fileType == 'audio') {
+    content = Icon(Icons.audio_file, size: 50);
   } else {
-    content = Icon(
-      _fileType == 'audio' ? Icons.audio_file :
-      _fileType == 'video' ? Icons.video_file :
-      Icons.insert_drive_file,
-      size: 100,
-    );
+    content = Icon(Icons.insert_drive_file, size: 50);
   }
-
-
 
   showDialog(
     context: context,
@@ -242,8 +242,12 @@ void _onProceed(int selectedOption) {
           TextButton(
             child: Text('Share'),
             onPressed: () {
-              Navigator.of(context).pop(); // Close the current dialog
-              _showShareOptions(fileName, extension);
+              Navigator.of(context).pop();
+              if (_currentRedactionLevel == 1) {
+                _showShareOptions(fileName, extension);
+              } else {
+                _shareFile(fileName, extension, withKey: false);
+              }
             },
           ),
           if (_fileType != 'image')
@@ -258,9 +262,8 @@ void _onProceed(int selectedOption) {
     },
   );
 }
-
 void _showShareOptions(String fileName, String extension) {
-  print("Current redaction level in _showShareOptions: $_currentRedactionLevel");
+  print("Showing share options for level: $_currentRedactionLevel");
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -278,16 +281,15 @@ void _showShareOptions(String fileName, String extension) {
                 _shareFile(fileName, extension, withKey: false);
               },
             ),
-            if (_currentRedactionLevel == 1) // Changed to 1 to match your system
-              ListTile(
-                leading: Icon(Icons.vpn_key),
-                title: Text('Share with key'),
-                subtitle: Text('Whoever has the key can decrypt'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _shareFile(fileName, extension, withKey: true);
-                },
-              ),
+            ListTile(
+              leading: Icon(Icons.vpn_key),
+              title: Text('Share with key'),
+              subtitle: Text('Whoever has the key can decrypt'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _shareFile(fileName, extension, withKey: true);
+              },
+            ),
           ],
         ),
       );
@@ -296,17 +298,34 @@ void _showShareOptions(String fileName, String extension) {
 }
 void _shareFile(String fileName, String extension, {required bool withKey}) async {
   print("Sharing file. WithKey: $withKey, Current redaction level: $_currentRedactionLevel");
-  if (withKey && _currentRedactionLevel == 1) { // Changed to 1
-    // TODO: Implement key generation and attachment logic
-    String key = 'generated_key_here';
+  
+  if (_currentRedactionLevel == 1 && withKey) {
+    // Generate a random AES-256 key
+    final key = encrypt.Key.fromSecureRandom(32); // 256 bits
+    
+    // Generate a random IV
+    final iv = encrypt.IV.fromSecureRandom(16); // 128 bits
+
+    // Convert key and IV to base64 for easy sharing
+    final keyBase64 = base64Encode(key.bytes);
+    final ivBase64 = base64Encode(iv.bytes);
+
+    // Prepare the sharing text
+    String sharingText = 'Redacted file\n\n'
+        'AES Key: $keyBase64\n'
+        'IV: $ivBase64\n\n'
+        'Please keep this information secure.';
+
+    // Share the file along with the key and IV
     await Share.shareXFiles(
       [XFile(_redactedFilePath!)],
-      text: 'Redacted file (with key: $key)',
+      text: sharingText,
     );
   } else {
+    // Share without key and IV
     await Share.shareXFiles(
       [XFile(_redactedFilePath!)],
-      text: 'Redacted file (no key attached)',
+      text: 'Redacted file',
     );
   }
 }

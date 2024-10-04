@@ -45,6 +45,10 @@ dependencies:
   permission_handler: ^11.3.1
   device_info_plus: ^10.1.2
   path: ^1.9.0
+  encrypt: ^5.0.3
+  video_player: ^2.9.1
+  audioplayers: ^6.1.0
+  just_audio: ^0.9.40
 
 dev_dependencies:
   flutter_test:
@@ -70,13 +74,20 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    # - assets/MentalHealthCompanionResearchPaper.pdf
-    # - assets/mid.jpg
+    
+   
     - assets/redacted/audio_level_0.mp3
     - assets/redacted/audio_level_2.mp3
     - assets/redacted/audio_level_4.mp3
     - assets/redacted/video_level_0.mp4
     - assets/redacted/video_level_1.mp4
+    - assets/redacted/document_level_0.pdf
+    - assets/redacted/document_level_1.pdf
+    - assets/redacted/document_level_2.pdf
+    - assets/redacted/document_level_4.pdf
+
+    - assets/decrypted/image.jpg
+    - assets/decrypted/video.mp4
     - assets/welcome1.png
     - assets/welcome2.png
     - assets/welcome3.png

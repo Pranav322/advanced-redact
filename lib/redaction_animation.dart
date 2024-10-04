@@ -81,3 +81,5 @@ class _RedactionAnimationState extends State<RedactionAnimation>
     );
   }
 }
+//redaction_animation.dart
+

@@ -6,14 +6,17 @@ class EncryptionOption {
   final String tag;
   final List<String> description;
 
-  EncryptionOption({required this.title, required this.tag, required this.description});
+  EncryptionOption(
+      {required this.title, required this.tag, required this.description});
 }
 
 class EncryptionOptionsSheet extends StatefulWidget {
   final Function(int) onProceed;
   final double heightFactor;
 
-  const EncryptionOptionsSheet({Key? key, required this.onProceed, this.heightFactor = 0.8}) : super(key: key);
+  const EncryptionOptionsSheet(
+      {Key? key, required this.onProceed, this.heightFactor = 0.8})
+      : super(key: key);
 
   @override
   _EncryptionOptionsSheetState createState() => _EncryptionOptionsSheetState();
@@ -26,46 +29,52 @@ class _EncryptionOptionsSheetState extends State<EncryptionOptionsSheet> {
 
   final List<EncryptionOption> _options = [
     EncryptionOption(
-      title: "Basic Redaction",
-      tag: "Online / Offline",
+      title: "Pixel Scramble",
+      tag: "Offline & Irrecoverable",
       description: [
-        "Patti lgaane vaala",
-        "dekh lo kaam kre to",
-        "kar jayega bharosa rkho"
+        "Sensitive content is hidden behind black bars",
+        "For multimedia: pixelated areas where faces",
+        "Quick and basic redaction for immediate privacy"
       ],
     ),
     EncryptionOption(
-      title: "Intermediate Redaction",
-      tag: "Online / Offline",
-      description: ["Thik thak security", "ha ha ha", "Kaam krega"],
-    ),
-    EncryptionOption(
-      title: "Advanced Redaction",
-      tag: "Online",
+      title: "Encrypted Mask",
+      tag: "Offline & Recoverable",
       description: [
-        "Blockchain level security",
-        "Kuchh Kuchh",
-        "Aur v kuchh kuchh"
+        "The sensitive content of your file is locked up with a secret key.",
+        "Without a key it's just a bunch of random, unreadable text.",
+        "Only people who have permission can view or change that information.",
+        "Keep your key safe it's Irrecoverable",
       ],
     ),
     EncryptionOption(
-      title: "Non Recoverable Redaction",
-      tag: "Online",
+      title: "Synthetic Shield",
+      tag: "Online & Irrecoverable",
       description: [
-        "Once redacted, the data cannot be recovered",
-        "May not work as expected on all file types",
-        "Kuch aur v likh do"
+        "Sensitive details are swapped with fake, random information.",
+        "The overall structure stays intact",
+        "Privacy-preserving anonymization with synthetic data"
       ],
     ),
     EncryptionOption(
-  title: "Blockchain Level Redaction",
-  tag: "Online",
-  description: [
-    "Highest level of security using blockchain technology",
-    "Immutable and tamper-proof redaction",
-    "Distributed ledger ensures data integrity"
-  ],
-),
+      title: "Blockchain Guard",
+      tag: "Online and Recoverable",
+      description: [
+        "Verifiable, tamper-proof  redaction",
+        "Auditing is possible",
+        "Redaction Without Revelation",
+        "Guarantees document integrity and compliance with GDPR"
+      ],
+    ),
+    EncryptionOption(
+      title: "Secure Shred",
+      tag: "Offline and Irrecoverable",
+      description: [
+        "Irrecoverable deletion to permanently destroy sensitive data.",
+        "Data cannot be leaked or recovered, even with advanced forensic tools.",
+        "Guarantees Sensitive data cannot be reconstructed."
+      ],
+    ),
   ];
 
   void _updateEyeOpenness(int? option) {
@@ -203,7 +212,7 @@ class _EncryptionOptionsSheetState extends State<EncryptionOptionsSheet> {
             ],
           ),
         ],
-      ),
-    );
-  }
+     ),
+);
+}
 }
